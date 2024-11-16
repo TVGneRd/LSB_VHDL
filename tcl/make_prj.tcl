@@ -19,7 +19,9 @@ if { [file exists $PROJECT_DIR] != 0 } {
 	file delete -force $PROJECT_NAME 
 	puts "Delete old Project" 
 } 
- 
+
+set_param gui.addressMap 0
+
 create_project $PROJECT_NAME $PROJECT_DIR -part $FPGA_PART 
 set_property target_language $TARGET_LANG [current_project] 
 set_property simulator_language $SIM_LANG [current_project] 
