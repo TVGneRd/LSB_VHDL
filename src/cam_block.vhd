@@ -36,8 +36,8 @@ entity cam_block is
         clk         : in  std_logic;
         reset       : in  std_logic;
         data_out    : out std_logic_vector(23 downto 0);
-        data_valid  : in std_logic;
-        data_ready  : out  std_logic
+        data_valid  : in std_logic; -- 1 дождались
+        data_ready  : out  std_logic -- 1 готовы передать
     );
 end cam_block;
 
