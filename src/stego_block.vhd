@@ -32,7 +32,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity stego_block is
---  Port ( );
+    port (
+        clk         : in  std_logic;
+        reset       : in  std_logic;
+        data_in     : in  std_logic_vector(7 downto 0);
+        data_valid  : in  std_logic;
+        data_ready  : out std_logic;
+        data_out    : out std_logic_vector(7 downto 0)
+    );
 end stego_block;
 
 architecture Behavioral of stego_block is
