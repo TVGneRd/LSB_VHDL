@@ -35,7 +35,7 @@ entity cam_block is
    port (
         clk         : in  std_logic;
         reset       : in  std_logic;
-        data_out    : out std_logic_vector(7 downto 0);
+        data_out    : out std_logic_vector(23 downto 0);
         data_valid  : in std_logic;
         data_ready  : out  std_logic
     );
