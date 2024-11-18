@@ -23,56 +23,20 @@ architecture Behavioral of tb_axi4 is
     signal AXI_1_write_test_done    : boolean := false;
     signal AXI_1_write_addr         : std_logic_vector(31 downto 2)     := (others => '0');
     signal AXI_1_write_data         : std_logic_vector(31 downto 0)     := (others => '0');
-    signal AXI_1_read_addr          : std_logic_vector(31 downto 2)     := (others => '0');
-    signal AXI_1_read_data          : std_logic_vector(31 downto 0);
     signal AXI_1_write_start        : std_logic                         := '0';
     signal AXI_1_write_complete     : std_logic;
     signal AXI_1_write_result       : std_logic_vector(1 downto 0);
-    signal AXI_1_write_mask         : std_logic_vector(3 downto 0)      := (others => '1');
-    signal AXI_1_read_start         : std_logic                         := '0';
-    signal AXI_1_read_complete      : std_logic;
-    signal AXI_1_read_result        : std_logic_vector(1 downto 0);
     signal AXI_1_ACLK               : std_logic;
-    signal AXI_1_AWID               : std_logic_vector(2 DOWNTO 0);
     signal AXI_1_AWADDR             : std_logic_vector(31 downto 0);
-    signal AXI_1_AWLEN              : std_logic_vector(3 downto 0);
-    signal AXI_1_AWSIZE             : std_logic_vector(2 downto 0);
-    signal AXI_1_AWBURST            : std_logic_vector(1 downto 0);
-    signal AXI_1_AWLOCK             : std_logic_vector(1 downto 0);
-    signal AXI_1_AWCACHE            : std_logic_vector(3 downto 0);
-    signal AXI_1_AWPROT             : std_logic_vector(2 downto 0);
-    signal AXI_1_AWQOS              : std_logic_vector(3 downto 0);
-    signal AXI_1_AWUSER             : std_logic_vector(4 downto 0);
     signal AXI_1_AWVALID            : std_logic;
     signal AXI_1_AWREADY            : std_logic                         := '0';
-    signal AXI_1_WID                : std_logic_vector(2 downto 0);
     signal AXI_1_WDATA              : std_logic_vector(31 downto 0);
-    signal AXI_1_WSTRB              : std_logic_vector(3 downto 0);
-    signal AXI_1_WLAST              : std_logic;
     signal AXI_1_WVALID             : std_logic;
     signal AXI_1_WREADY             : std_logic                         := '0';
-    signal AXI_1_BID                : std_logic_vector(2 downto 0)      := (others => '0');
     signal AXI_1_BRESP              : std_logic_vector(1 downto 0)      := (others => '0');
     signal AXI_1_BVALID             : std_logic                         := '0';
     signal AXI_1_BREADY             : std_logic;
-    signal AXI_1_ARID               : std_logic_vector(2 downto 0);
-    signal AXI_1_ARADDR             : std_logic_vector(31 downto 0);
-    signal AXI_1_ARLEN              : std_logic_vector(3 downto 0);
-    signal AXI_1_ARSIZE             : std_logic_vector(2 downto 0);
-    signal AXI_1_ARBURST            : std_logic_vector(1 downto 0);
-    signal AXI_1_ARLOCK             : std_logic_vector(1 downto 0);
-    signal AXI_1_ARCACHE            : std_logic_vector(3 downto 0);
-    signal AXI_1_ARPROT             : std_logic_vector(2 downto 0);
-    signal AXI_1_ARQOS              : std_logic_vector(3 downto 0);
-    signal AXI_1_ARUSER             : std_logic_vector(4 downto 0);
-    signal AXI_1_ARVALID            : std_logic;
-    signal AXI_1_ARREADY            : std_logic                         := '0';
-    signal AXI_1_RID                : std_logic_vector(2 downto 0)      := (others => '0');
-    signal AXI_1_RDATA              : std_logic_vector(31 downto 0)     := (others => '0');
-    signal AXI_1_RRESP              : std_logic_vector(1 downto 0)      := (others => '0');
-    signal AXI_1_RLAST              : std_logic                         := '0';
-    signal AXI_1_RVALID             : std_logic                         := '0';
-    signal AXI_1_RREADY             : std_logic;
+    
     -- AXI 2
     -- Constants
     constant axi_2_data_width_log2b     : natural                           := 6;
@@ -81,56 +45,19 @@ architecture Behavioral of tb_axi4 is
     signal AXI_2_write_test_done    : boolean := false;
     signal AXI_2_write_addr         : std_logic_vector(31 downto 2)     := (others => '0');
     signal AXI_2_write_data         : std_logic_vector(31 downto 0)     := (others => '0');
-    signal AXI_2_read_addr          : std_logic_vector(31 downto 2)     := (others => '0');
-    signal AXI_2_read_data          : std_logic_vector(31 downto 0);
     signal AXI_2_write_start        : std_logic                         := '0';
     signal AXI_2_write_complete     : std_logic;
     signal AXI_2_write_result       : std_logic_vector(1 downto 0);
-    signal AXI_2_write_mask         : std_logic_vector(3 downto 0)      := (others => '1');
-    signal AXI_2_read_start         : std_logic                         := '0';
-    signal AXI_2_read_complete      : std_logic;
-    signal AXI_2_read_result        : std_logic_vector(1 downto 0);
     signal AXI_2_ACLK               : std_logic;
-    signal AXI_2_AWID               : std_logic_vector(2 DOWNTO 0);
     signal AXI_2_AWADDR             : std_logic_vector(31 downto 0);
-    signal AXI_2_AWLEN              : std_logic_vector(3 downto 0);
-    signal AXI_2_AWSIZE             : std_logic_vector(2 downto 0);
-    signal AXI_2_AWBURST            : std_logic_vector(1 downto 0);
-    signal AXI_2_AWLOCK             : std_logic_vector(1 downto 0);
-    signal AXI_2_AWCACHE            : std_logic_vector(3 downto 0);
-    signal AXI_2_AWPROT             : std_logic_vector(2 downto 0);
-    signal AXI_2_AWQOS              : std_logic_vector(3 downto 0);
-    signal AXI_2_AWUSER             : std_logic_vector(4 downto 0);
     signal AXI_2_AWVALID            : std_logic;
     signal AXI_2_AWREADY            : std_logic                         := '0';
-    signal AXI_2_WID                : std_logic_vector(2 downto 0);
     signal AXI_2_WDATA              : std_logic_vector(63 downto 0);
-    signal AXI_2_WSTRB              : std_logic_vector(7 downto 0);
-    signal AXI_2_WLAST              : std_logic;
     signal AXI_2_WVALID             : std_logic;
     signal AXI_2_WREADY             : std_logic                         := '0';
-    signal AXI_2_BID                : std_logic_vector(2 downto 0)      := (others => '0');
     signal AXI_2_BRESP              : std_logic_vector(1 downto 0)      := (others => '0');
     signal AXI_2_BVALID             : std_logic                         := '0';
     signal AXI_2_BREADY             : std_logic;
-    signal AXI_2_ARID               : std_logic_vector(2 downto 0);
-    signal AXI_2_ARADDR             : std_logic_vector(31 downto 0);
-    signal AXI_2_ARLEN              : std_logic_vector(3 downto 0);
-    signal AXI_2_ARSIZE             : std_logic_vector(2 downto 0);
-    signal AXI_2_ARBURST            : std_logic_vector(1 downto 0);
-    signal AXI_2_ARLOCK             : std_logic_vector(1 downto 0);
-    signal AXI_2_ARCACHE            : std_logic_vector(3 downto 0);
-    signal AXI_2_ARPROT             : std_logic_vector(2 downto 0);
-    signal AXI_2_ARQOS              : std_logic_vector(3 downto 0);
-    signal AXI_2_ARUSER             : std_logic_vector(4 downto 0);
-    signal AXI_2_ARVALID            : std_logic;
-    signal AXI_2_ARREADY            : std_logic                         := '0';
-    signal AXI_2_RID                : std_logic_vector(2 downto 0)      := (others => '0');
-    signal AXI_2_RDATA              : std_logic_vector(63 downto 0)     := (others => '0');
-    signal AXI_2_RRESP              : std_logic_vector(1 downto 0)      := (others => '0');
-    signal AXI_2_RLAST              : std_logic                         := '0';
-    signal AXI_2_RVALID             : std_logic                         := '0';
-    signal AXI_2_RREADY             : std_logic;
 begin
 
     test_done <= AXI_1_write_test_done and AXI_2_write_test_done;
@@ -149,28 +76,14 @@ begin
         write_start         => AXI_1_write_start,
         write_complete      => AXI_1_write_complete,
         write_result        => AXI_1_write_result,
-        write_mask          => AXI_1_write_mask,
         
         M_AXI_ACLK          => AXI_1_ACLK,
-        M_AXI_AWID          => AXI_1_AWID,
         M_AXI_AWADDR        => AXI_1_AWADDR,
-        M_AXI_AWLEN         => AXI_1_AWLEN,
-        M_AXI_AWSIZE        => AXI_1_AWSIZE,
-        M_AXI_AWBURST       => AXI_1_AWBURST,
-        M_AXI_AWLOCK        => AXI_1_AWLOCK,
-        M_AXI_AWCACHE       => AXI_1_AWCACHE,
-        M_AXI_AWPROT        => AXI_1_AWPROT,
-        M_AXI_AWQOS         => AXI_1_AWQOS,
-        M_AXI_AWUSER        => AXI_1_AWUSER,
         M_AXI_AWVALID       => AXI_1_AWVALID,
         M_AXI_AWREADY       => AXI_1_AWREADY,
-        M_AXI_WID           => AXI_1_WID,
         M_AXI_WDATA         => AXI_1_WDATA,
-        M_AXI_WSTRB         => AXI_1_WSTRB,
-        M_AXI_WLAST         => AXI_1_WLAST,
         M_AXI_WVALID        => AXI_1_WVALID,
         M_AXI_WREADY        => AXI_1_WREADY,
-        M_AXI_BID           => AXI_1_BID,
         M_AXI_BRESP         => AXI_1_BRESP,
         M_AXI_BVALID        => AXI_1_BVALID,
         M_AXI_BREADY        => AXI_1_BREADY
@@ -190,28 +103,15 @@ begin
         write_start         => AXI_2_write_start,
         write_complete      => AXI_2_write_complete,
         write_result        => AXI_2_write_result,
-        write_mask          => AXI_2_write_mask,
        
         M_AXI_ACLK          => AXI_2_ACLK,
-        M_AXI_AWID          => AXI_2_AWID,
         M_AXI_AWADDR        => AXI_2_AWADDR,
-        M_AXI_AWLEN         => AXI_2_AWLEN,
-        M_AXI_AWSIZE        => AXI_2_AWSIZE,
-        M_AXI_AWBURST       => AXI_2_AWBURST,
-        M_AXI_AWLOCK        => AXI_2_AWLOCK,
-        M_AXI_AWCACHE       => AXI_2_AWCACHE,
-        M_AXI_AWPROT        => AXI_2_AWPROT,
-        M_AXI_AWQOS         => AXI_2_AWQOS,
-        M_AXI_AWUSER        => AXI_2_AWUSER,
         M_AXI_AWVALID       => AXI_2_AWVALID,
         M_AXI_AWREADY       => AXI_2_AWREADY,
-        M_AXI_WID           => AXI_2_WID,
+        
         M_AXI_WDATA         => AXI_2_WDATA,
-        M_AXI_WSTRB         => AXI_2_WSTRB,
-        M_AXI_WLAST         => AXI_2_WLAST,
         M_AXI_WVALID        => AXI_2_WVALID,
         M_AXI_WREADY        => AXI_2_WREADY,
-        M_AXI_BID           => AXI_2_BID,
         M_AXI_BRESP         => AXI_2_BRESP,
         M_AXI_BVALID        => AXI_2_BVALID,
         M_AXI_BREADY        => AXI_2_BREADY
@@ -292,7 +192,6 @@ begin
         assert AXI_1_AWVALID = '1' severity error;
         assert AXI_1_AWADDR = std_logic_vector(write_addr) & "00";
         assert AXI_1_WDATA = std_logic_vector(resize(write_data, AXI_1_WDATA'length));
-        assert AXI_1_WSTRB = std_logic_vector(resize(unsigned(AXI_1_write_mask), AXI_1_WSTRB'length));
         assert AXI_1_WVALID = '1' severity error;
         -- AXI_1_BREADY
 
@@ -396,7 +295,6 @@ begin
         assert AXI_2_AWVALID = '1' severity error;
         assert AXI_2_AWADDR = std_logic_vector(write_addr(write_addr'left downto 3)) & "000";
         assert AXI_2_WDATA = std_logic_vector(write_data) & (31 downto 0 => '0');
-        assert AXI_2_WSTRB = "11110000";
         assert AXI_2_WVALID = '1' severity error;
         -- AXI_2_BREADY
 

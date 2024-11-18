@@ -1,10 +1,10 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: 
+-- Engineer: Andrey Fominnnnn
 -- 
 -- Create Date: 11/16/2024 06:33:25 PM
 -- Design Name: 
--- Module Name: cam_block - Behavioral
+-- Module Name: stego_block - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
