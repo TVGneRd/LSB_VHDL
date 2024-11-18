@@ -29,8 +29,6 @@ architecture Behavioral of tb_axi4 is
     signal AXI_1_write_mask         : std_logic_vector(3 downto 0)      := (others => '1');
     signal AXI_1_ACLK               : std_logic;
     signal AXI_1_AWADDR             : std_logic_vector(31 downto 0);
-    signal AXI_1_AWBURST            : std_logic_vector(1 downto 0);
-    signal AXI_1_AWUSER             : std_logic_vector(4 downto 0);
     signal AXI_1_AWVALID            : std_logic;
     signal AXI_1_AWREADY            : std_logic                         := '0';
     signal AXI_1_WDATA              : std_logic_vector(31 downto 0);
