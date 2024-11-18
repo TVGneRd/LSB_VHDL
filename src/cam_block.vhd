@@ -18,7 +18,6 @@ architecture Behavioral of cam_block is
     signal current_state, next_state : state_type;
     constant IMAGE_WIDTH : integer := 32;  -- Ширина изображения
     constant IMAGE_HEIGHT : integer := 32; -- Высота изображения
-    
     -- Пример массива данных (замените на реальные данные)
     type pixel_array is array (0 to IMAGE_WIDTH * IMAGE_HEIGHT - 1) of STD_LOGIC_VECTOR(23 downto 0);
     constant image_data : pixel_array := (
@@ -58,12 +57,14 @@ architecture Behavioral of cam_block is
     );
     
     signal pixel_index : integer := 0;
+    signal transmit_done : boolean := false;
 begin
--- State register
+
+    -- State register
     process(clk, reset)
     begin
         if reset = '1' then
-        current_state <= reset_state;
+            current_state <= reset_state;
         elsif rising_edge(clk) then
             current_state <= next_state;
         end if;
@@ -85,6 +86,8 @@ begin
 
             when transmit =>
                 if valid = '1' then
+                    next_state <= transmit;
+                elsif valid = '0' and transmit_done then
                     if pixel_index < image_data'length - 1 then
                         next_state <= transmit;
                     else
@@ -115,7 +118,6 @@ begin
                 pixel_data <= (others => '0');
 
             when transmit =>
-                ready <= '0';
                 if valid = '1' then
                     ready <= '1';
                     pixel_data <= image_data(pixel_index);
@@ -123,6 +125,7 @@ begin
                     ready <= '0';
                     pixel_data <= (others => '0');
                 end if;
+
             when reset_state =>
                 ready <= '0';
                 pixel_data <= (others => '0');
@@ -138,12 +141,18 @@ begin
     begin
         if reset = '1' then
             pixel_index <= 0;
+            transmit_done <= false;
         elsif rising_edge(clk) then
-            if current_state = transmit and valid = '1' then
-                if pixel_index < image_data'length - 1 then
-                    pixel_index <= pixel_index + 1;
-                else
-                    pixel_index <= 0;
+            if current_state = transmit then
+                if valid = '1' then
+                    transmit_done <= true;
+                elsif valid = '0' and transmit_done then
+                    transmit_done <= false;
+                    if pixel_index < image_data'length - 1 then
+                        pixel_index <= pixel_index + 1;
+                    else
+                        pixel_index <= 0;
+                    end if;
                 end if;
             end if;
         end if;
