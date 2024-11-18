@@ -39,7 +39,7 @@ entity stego_block is
         pixel_valid  : in  std_logic;
         pixel_ready  : out std_logic;
         msg_in       : in std_logic;
-        pixel_out    : out std_logic_vector(23 downto 0)
+        pixel_out    : out std_logic_vector(23 downto 0);
     );
 end stego_block;
 
@@ -51,10 +51,10 @@ architecture Behavioral of stego_block is
     signal cur_state    : m_state_type := rst_state;
     signal next_state   : m_state_type := rst_state;
     signal done_flag    : STD_LOGIC := '0';
-    signal pixel_buffer : out std_logic_vector(23 downto 0)
+    signal pixel_buffer : std_logic_vector(23 downto 0);
 begin
     -- Переход состояний
-    state_transition : process(clk, rst)
+    state_transition : process(clk, reset)
     begin
         if reset = '1' then
             cur_state       <= rst_state;
@@ -77,7 +77,7 @@ begin
     end process;
     
     -- Выбор следующего состояния
-    state_decider : process(cur_state, done_flag, pixel_ready, pixel_valid)
+    state_decider : process(cur_state, done_flag, pixel_valid)
     begin
         next_state <= cur_state;
         case cur_state is
@@ -85,7 +85,7 @@ begin
                 next_state <= idle;
             when idle =>
                 if pixel_valid = '1' then
-                    next_state = embed;
+                    next_state <= embed;
                 else
                     next_state <= next_state;
                 end if;
@@ -106,19 +106,19 @@ begin
     -- Настройка выходных портов
     output_decide : process(cur_state)
     begin
-        case cur_state
+        case cur_state is
         when rst_state =>
             done_flag <= '0';
             pixel_ready <= '0';
             pixel_out <= (others => '0');
-        when idle
+        when idle =>
             done_flag <= '0';
             pixel_ready <= '1';
             pixel_out <= (others => '0');
-        when embed
+        when embed =>
             pixel_ready <= '0';
             pixel_out <= (others => '0');
-        when transmitting
+        when transmitting =>
             pixel_out <= pixel_buffer;
             pixel_ready <= '1';
         end case;
