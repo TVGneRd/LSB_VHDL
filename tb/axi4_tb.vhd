@@ -48,7 +48,7 @@ architecture Behavioral of tb_axi4 is
     signal AXI_2_write_start        : std_logic                         := '0';
     signal AXI_2_write_complete     : std_logic;
     signal AXI_2_write_result       : std_logic_vector(1 downto 0);
-      signal AXI_2_ACLK               : std_logic;
+    signal AXI_2_ACLK               : std_logic;
     signal AXI_2_AWADDR             : std_logic_vector(31 downto 0);
     signal AXI_2_AWVALID            : std_logic;
     signal AXI_2_AWREADY            : std_logic                         := '0';
