@@ -36,7 +36,7 @@ architecture Behavioral of stego_tb is
     
     signal pixel_in1    : std_logic_vector(23 downto 0) := (others => '0');
     signal pixel_valid1 : std_logic := '0';
-    signal msg_in1      : std_logic := '1';
+    signal msg_in1      : std_logic := '0';
     signal pixel_ready1 : std_logic := '0';
     signal pixel_out1   : std_logic_vector(23 downto 0) := (others => '0');
 
@@ -45,10 +45,28 @@ architecture Behavioral of stego_tb is
 begin
     test_done <= test_check;
 
+    clock_gen : process
+    begin
+        if not (test_done) then
+            -- 1/2 duty cycle
+            clk1 <= not clk1;
+            wait for clock_period/2;
+        else
+            wait;
+        end if;
+    end process;
+
+    reset_loop : process
+    begin
+        wait for 3*clock_period;
+        rst <= '0';
+        wait;
+    end process;
+
     stego_test : entity work.stego_block
     port map(
         clk => clk1,
-        rst => rst1,
+        reset => rst1,
         pixel_in => pixel_in1,
         pixel_valid => pixel_valid1,
         msg_in => msg_in1,
@@ -57,7 +75,20 @@ begin
     );
     test_process : process
     begin
-        wait for 2 * clock_period;
+        msg_in1 <= '1';
+        wait for clock_period;
+        assert pixel_ready1 = '0' severity error;
+
+        wait until rst = '0';
+        wait for clock_period;
+        assert pixel_ready1 = '1' severity error;
+        
+        pixel_valid1 = '1';
+        wait for clock_period;
+        assert pixel_ready1 = '0' severity error;
+        wait for clock_period;
+        assert pixel_ready1 = '1' severity error;
         test_check <= true;
+        wait;
     end process;
-end Behavioral
+end Behavioral;

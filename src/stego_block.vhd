@@ -82,7 +82,11 @@ begin
         next_state <= cur_state;
         case cur_state is
             when rst_state =>
-                next_state <= idle;
+                if reset = '0' then
+                    next_state <= idle;
+                else
+                    next_state <= next_state;
+                end if; 
             when idle =>
                 if pixel_valid = '1' then
                     next_state <= embed;
