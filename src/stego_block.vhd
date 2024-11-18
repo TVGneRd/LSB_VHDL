@@ -39,7 +39,7 @@ entity stego_block is
         pixel_valid  : in  std_logic;
         pixel_ready  : out std_logic;
         msg_in       : in std_logic;
-        pixel_out    : out std_logic_vector(23 downto 0);
+        pixel_out    : out std_logic_vector(23 downto 0)
     );
 end stego_block;
 
