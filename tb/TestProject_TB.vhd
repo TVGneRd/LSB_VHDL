@@ -39,7 +39,7 @@ begin
 
   test_bench_main : PROCESS
   BEGIN
-    test_completed <= true AFTER 50 ns;
+    test_completed <= true AFTER 10 us;
     WAIT;
   END PROCESS test_bench_main;
 end architecture rtl;
