@@ -51,7 +51,6 @@ begin
         write_start         => write_start,
         write_complete      => write_complete,
         write_result        => write_result,
-        write_mask          => write_mask,
         M_AXI_AWADDR        => M_AXI_AWADDR,
         M_AXI_AWVALID       => M_AXI_AWVALID,
         M_AXI_AWREADY       => M_AXI_AWREADY,
