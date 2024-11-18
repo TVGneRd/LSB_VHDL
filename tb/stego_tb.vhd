@@ -59,7 +59,7 @@ begin
     reset_loop : process
     begin
         wait for 3*clock_period;
-        rst <= '0';
+        rst1 <= '0';
         wait;
     end process;
 
@@ -79,11 +79,11 @@ begin
         wait for clock_period;
         assert pixel_ready1 = '0' severity error;
 
-        wait until rst = '0';
+        wait until rst1 = '0';
         wait for clock_period;
         assert pixel_ready1 = '1' severity error;
         
-        pixel_valid1 = '1';
+        pixel_valid1 <= '1';
         wait for clock_period;
         assert pixel_ready1 = '0' severity error;
         wait for clock_period;
