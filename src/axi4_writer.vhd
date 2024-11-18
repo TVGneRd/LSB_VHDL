@@ -35,7 +35,6 @@ entity axi4_writer is
         write_start         :   in  std_logic;
         write_complete      :   out std_logic;
         write_result        :   out std_logic_vector(1 downto 0);
-        write_mask          :   in  std_logic_vector(3 downto 0);
         -- Write address channel signals
         M_AXI_AWADDR        :   out std_logic_vector(2**axi_address_width_log2b - 1 downto 0);
         M_AXI_AWVALID       :   out std_logic;
