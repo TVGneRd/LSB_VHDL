@@ -38,17 +38,10 @@ entity axi4_writer is
         write_mask          :   in  std_logic_vector(3 downto 0);
         -- Write address channel signals
         M_AXI_AWADDR        :   out std_logic_vector(2**axi_address_width_log2b - 1 downto 0);
-        M_AXI_AWLEN         :   out std_logic_vector(3 downto 0);
-        M_AXI_AWSIZE        :   out std_logic_vector(2 downto 0);
-        M_AXI_AWCACHE       :   out std_logic_vector(3 downto 0);
-        M_AXI_AWUSER        :   out std_logic_vector(4 downto 0);
-        M_AXI_AWBURST       :   out std_logic_vector(1 downto 0);
         M_AXI_AWVALID       :   out std_logic;
         M_AXI_AWREADY       :   in  std_logic;
         -- Write data channel signals
         M_AXI_WDATA         :   out std_logic_vector(2**axi_data_width_log2b - 1 downto 0);
-        M_AXI_WSTRB         :   out std_logic_vector(2**(axi_data_width_log2b - 3) - 1 downto 0);
-        M_AXI_WLAST         :   out std_logic;
         M_AXI_WVALID        :   out std_logic;
         M_AXI_WREADY        :   in  std_logic;
         --  Write response channel signals
@@ -60,14 +53,14 @@ end axi4_writer;
 
 ARCHITECTURE Behavioral of axi4_writer is
     type m_state_type is (rst_state, wait_for_start, wait_for_awready_wready, wait_for_awready, wait_for_wready, assert_bready);
-
+    
     signal cur_state        : m_state_type      := rst_state;
     signal next_state       : m_state_type      := rst_state;
 
     signal write_addr_read  : boolean           := false;
     signal write_data_read  : boolean           := false;
     signal bresp_read       : boolean           := false;
-
+    
 begin
 
     data_safe : process(clk, rst, write_addr_read, write_data_read, bresp_read)
@@ -76,7 +69,6 @@ begin
         variable bresp_safe         : std_logic_vector(M_AXI_BRESP'range);
         variable shift_modifier     : natural;
         variable wdata_reg          : std_logic_vector(M_AXI_WDATA'range);
-        variable write_strobe       : std_logic_vector(M_AXI_WSTRB'range);
     begin
         if rst = '1' then
             write_addr_safe     := (others => '0');
@@ -105,10 +97,7 @@ begin
         M_AXI_AWADDR    <= (M_AXI_AWADDR'left downto write_addr_safe'left + 1 => '0') & write_addr_safe(write_addr_safe'left downto axi_data_width_log2b - 3) & (axi_data_width_log2b - 4 downto 0 => '0');
         M_AXI_WDATA     <= std_logic_vector(shift_left(unsigned(wdata_reg), shift_modifier*8));
         write_result    <= bresp_safe;
-        -- Write strobe, which bytes of the WDATA are useful?
-        -- The write mask is the inverse write strobe, so use that and shift it
-        write_strobe    := (write_strobe'left downto write_mask'length => '0') & (write_mask);
-        M_AXI_WSTRB     <= std_logic_vector(shift_left(unsigned(write_strobe), shift_modifier));
+
     end process;
 
     state_transition : process(clk, rst)
@@ -208,19 +197,5 @@ begin
                 write_data_read     <= true;
                 M_AXI_WVALID    <= '0';
         end case;
-        -- Burst length 1, see AXI spec p 46
-        M_AXI_AWLEN     <= (others => '0');
-        -- 4 bytes (=32bit) per burst, see AXI spec p 47
-        M_AXI_AWSIZE    <= "010";
-        -- Does not matter, since burst size is 1, see AXI spec p 48
-        -- INCR = 0x01
-        M_AXI_AWBURST   <= "01";
-        -- AWCACHE and AWUSER are specific for ZYNQ
-        -- There is a possibility to use the ZYNQ cache, this is ignored.
-        M_AXI_AWCACHE   <= (others => '0');
-        M_AXI_AWUSER    <= (others => '0');
-        -- There is only one transfer, so that one is always the last
-        -- See AXI4 spec p 41
-        M_AXI_WLAST     <= '1';
     end process;
 end Behavioral;
