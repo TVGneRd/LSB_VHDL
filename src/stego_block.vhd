@@ -69,7 +69,7 @@ begin
         if reset = '1' then
             done_flag <= '0';
         elsif rising_edge(clk) then
-            if cur_state = embed then
+            if cur_state = embed and done_flag = '0' then
                 pixel_buffer <= pixel_in(23 downto 1) & msg_in;  
                 done_flag <= '1';
             end if;
@@ -121,8 +121,9 @@ begin
             pixel_out <= (others => '0');
         when embed =>
             pixel_ready <= '0';
-            pixel_out <= (others => '0');
+            pixel_out <= pixel_buffer;
         when transmitting =>
+            done_flag <= '1';
             pixel_out <= pixel_buffer;
             pixel_ready <= '1';
         end case;
