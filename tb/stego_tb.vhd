@@ -58,7 +58,7 @@ begin
 
     reset_loop : process
     begin
-        wait for 3*clock_period;
+        wait for 2*clock_period;
         rst1 <= '0';
         wait;
     end process;
@@ -77,17 +77,17 @@ begin
     begin
         msg_in1 <= '1';
         wait for clock_period;
-        assert pixel_ready1 = '0' severity error;
+        assert pixel_ready1 = '0' report "Reset works bad.." severity error;
 
         wait until rst1 = '0';
         wait for clock_period;
-        assert pixel_ready1 = '1' severity error;
+        assert pixel_ready1 = '1' report "Didn't gets ready for pixel.." severity error;
         
         pixel_valid1 <= '1';
         wait for clock_period;
-        assert pixel_ready1 = '0' severity error;
+        assert pixel_ready1 = '0' report "Didn't drop ready trigger.." severity error;
         wait for clock_period;
-        assert pixel_ready1 = '1' severity error;
+        assert pixel_ready1 = '1' report "Didn't pull ready trigger.." severity error;
         test_check <= true;
         wait;
     end process;
