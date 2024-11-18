@@ -15,7 +15,6 @@ entity axi4_master is
         write_start         :   in  std_logic;
         write_complete      :   out std_logic;
         write_result        :   out std_logic_vector(1 downto 0);
-        write_mask          :   in  std_logic_vector(3 downto 0);
       
         -- Global Signals
         M_AXI_ACLK          :   out std_logic;
