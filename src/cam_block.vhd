@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-entity cam_block is
+entity Camera is
     Port (
         clk : in STD_LOGIC;
         reset : in STD_LOGIC;
@@ -11,14 +11,15 @@ entity cam_block is
         pixel_data : out STD_LOGIC_VECTOR(23 downto 0);
         ready : out STD_LOGIC
     );
-end cam_block;
+end Camera;
 
-architecture Behavioral of cam_block is
+architecture Behavioral of Camera is
     type state_type is (idle, make_file, transmit, reset_state);
     signal current_state, next_state : state_type;
     constant IMAGE_WIDTH : integer := 32;  -- Ширина изображения
     constant IMAGE_HEIGHT : integer := 32; -- Высота изображения
-    -- Пример массива данных (замените на реальные данные)
+
+    --  массив данных 
     type pixel_array is array (0 to IMAGE_WIDTH * IMAGE_HEIGHT - 1) of STD_LOGIC_VECTOR(23 downto 0);
     constant image_data : pixel_array := (
         x"FF0000", x"FE0001", x"FD0002", x"FC0003", x"FB0004", x"FA0005", x"F90006", x"F80007",
@@ -60,17 +61,17 @@ architecture Behavioral of cam_block is
     signal transmit_done : boolean := false;
 begin
 
-    -- State register
+    -- сброс
     process(clk, reset)
     begin
         if reset = '1' then
             current_state <= reset_state;
-        elsif rising_edge(clk) then
+        elsif rising_edge(clk) then -- если циклично то норм
             current_state <= next_state;
         end if;
     end process;
 
-    -- Next state logic
+    -- состояния
     process(current_state, valid, reset)
     begin
         case current_state is
@@ -105,7 +106,7 @@ begin
         end case;
     end process;
 
-    -- Output logic
+    -- работаем с мастером
     process(current_state, valid)
     begin
         case current_state is
@@ -116,14 +117,16 @@ begin
             when make_file =>
                 ready <= '0';
                 pixel_data <= (others => '0');
+                -- можно ввести новый массив с камеры
+
 
             when transmit =>
                 if valid = '1' then
                     ready <= '1';
                     pixel_data <= image_data(pixel_index);
-                else
-                    ready <= '0';
-                    pixel_data <= (others => '0');
+             -- else
+                --  ready <= '0';
+                --  pixel_data <= (others => '0'); не нужно по идее, сбивает реди
                 end if;
 
             when reset_state =>
@@ -136,7 +139,7 @@ begin
         end case;
     end process;
 
-    -- Pixel index update
+    -- решаем что делать с пикселями
     process(clk, reset)
     begin
         if reset = '1' then
