@@ -72,6 +72,8 @@ begin
             if cur_state = embed and done_flag = '0' then
                 pixel_buffer <= pixel_in(23 downto 1) & msg_in;  
                 done_flag <= '1';
+            else 
+                done_flag <= '0';
             end if;
         end if;
     end process;
@@ -112,18 +114,14 @@ begin
     begin
         case cur_state is
         when rst_state =>
-            done_flag <= '0';
             pixel_ready <= '0';
             pixel_out <= (others => '0');
         when idle =>
-            done_flag <= '0';
             pixel_ready <= '1';
             pixel_out <= (others => '0');
         when embed =>
             pixel_ready <= '0';
-            pixel_out <= pixel_buffer;
         when transmitting =>
-            done_flag <= '1';
             pixel_out <= pixel_buffer;
             pixel_ready <= '1';
         end case;
