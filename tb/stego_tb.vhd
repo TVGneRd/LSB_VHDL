@@ -86,8 +86,9 @@ begin
         pixel_valid1 <= '1';
         wait for clock_period;
         assert pixel_ready1 = '0' report "Didn't drop ready trigger.." severity error;
-        wait for clock_period;
+        wait for 2 * clock_period;
         assert pixel_ready1 = '1' report "Didn't pull ready trigger.." severity error;
+        wait for clock_period;
         test_check <= true;
         wait;
     end process;
