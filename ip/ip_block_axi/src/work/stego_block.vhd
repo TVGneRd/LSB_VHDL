@@ -56,7 +56,7 @@ begin
     -- Переход состояний
     state_transition : process(clk, reset)
     begin
-        if reset = '1' then
+        if reset = '0' then
             cur_state       <= rst_state;
         elsif rising_edge(clk) then
             cur_state       <= next_state;
@@ -66,7 +66,7 @@ begin
     -- Внедрение
     embedding : process(clk, reset, cur_state)
     begin
-        if reset = '1' then
+        if reset = '0' then
             done_flag <= '0';
         elsif rising_edge(clk) then
             if cur_state = embed and done_flag = '0' then
@@ -84,7 +84,7 @@ begin
         next_state <= cur_state;
         case cur_state is
             when rst_state =>
-                if reset = '0' then
+                if reset = '1' then
                     next_state <= idle;
                 else
                     next_state <= next_state;
