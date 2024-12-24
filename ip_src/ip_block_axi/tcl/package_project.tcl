@@ -26,10 +26,10 @@ set_property core_revision 2 [ipx::current_core]
 ipx::add_bus_parameter PROTOCOL [ipx::get_bus_interfaces m_axi -of_objects [ipx::current_core]]
 set_property value AXI4 [ipx::get_bus_parameters PROTOCOL -of_objects [ipx::get_bus_interfaces m_axi -of_objects [ipx::current_core]]]
 set_property name M_AXI [ipx::get_bus_interfaces m_axi -of_objects [ipx::current_core]]
+ipx::associate_bus_interfaces -busif m_axi -clock refclk [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 ipx::check_integrity [ipx::current_core]
-
 
 update_compile_order -fileset sources_1
 set_property core_revision 1 [ipx::current_core]

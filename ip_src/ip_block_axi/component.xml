@@ -23,6 +23,14 @@
         </spirit:portMap>
         <spirit:portMap>
           <spirit:logicalPort>
+            <spirit:name>AWLEN</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>m_axi_awlen</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
             <spirit:name>AWVALID</spirit:name>
           </spirit:logicalPort>
           <spirit:physicalPort>
@@ -43,6 +51,14 @@
           </spirit:logicalPort>
           <spirit:physicalPort>
             <spirit:name>m_axi_wdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WLAST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>m_axi_wlast</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
         <spirit:portMap>
@@ -126,7 +142,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>9982b04c</spirit:value>
+            <spirit:value>99f707cd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -142,7 +158,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>9982b04c</spirit:value>
+            <spirit:value>99f707cd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -182,6 +198,49 @@
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>STD_LOGIC</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>cam_data</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">23</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>cam_valid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>cam_ready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
               <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
               <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
             </spirit:wireTypeDef>
@@ -235,6 +294,23 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
+        <spirit:name>m_axi_awlen</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">3</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
         <spirit:name>m_axi_wdata</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
@@ -278,6 +354,19 @@
           <spirit:driver>
             <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
           </spirit:driver>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>m_axi_wlast</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
         </spirit:wire>
       </spirit:port>
       <spirit:port>
@@ -335,11 +424,6 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>src/cam_block.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>src/stego_block.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>work</spirit:logicalName>
@@ -357,17 +441,12 @@
       <spirit:file>
         <spirit:name>src/TestProject_TOP.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_b23e9b73</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_0040b0db</spirit:userFileType>
         <spirit:logicalName>work</spirit:logicalName>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
-      <spirit:file>
-        <spirit:name>src/cam_block.vhd</spirit:name>
-        <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:logicalName>work</spirit:logicalName>
-      </spirit:file>
       <spirit:file>
         <spirit:name>src/stego_block.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
@@ -428,15 +507,15 @@
       </xilinx:taxonomies>
       <xilinx:displayName>TestProject_TOP_v1_0</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>1</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-12-02T16:27:48Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>2</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2024-12-24T18:31:46Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.2.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="0ccfff33"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="8b741e39"/>
       <xilinx:checksum xilinx:scope="addressSpaces" xilinx:value="68e94c68"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="3e1877a7"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="9d4a443e"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="b1543779"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="c8b4e539"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="d28e5337"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>

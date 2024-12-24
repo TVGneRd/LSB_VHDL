@@ -23,10 +23,12 @@ entity axi4_master is
         M_AXI_AWADDR        :   out std_logic_vector(2**axi_address_width_log2b - 1 downto 0);
         M_AXI_AWVALID       :   out std_logic;
         M_AXI_AWREADY       :   in  std_logic;
+        M_AXI_AWLEN         :   out std_logic_vector(3 downto 0);
         -- Write data channel signals
         M_AXI_WDATA         :   out std_logic_vector(2**axi_data_width_log2b - 1 downto 0);
         M_AXI_WVALID        :   out std_logic;
         M_AXI_WREADY        :   in  std_logic;
+        M_AXI_WLAST         :   out std_logic;
         --  Write response channel signals
         M_AXI_BRESP         :   in  std_logic_vector(1 downto 0);
         M_AXI_BVALID        :   in  std_logic;
@@ -53,10 +55,12 @@ begin
         M_AXI_AWADDR        => M_AXI_AWADDR,
         M_AXI_AWVALID       => M_AXI_AWVALID,
         M_AXI_AWREADY       => M_AXI_AWREADY,
+        M_AXI_AWLEN         => M_AXI_AWLEN,
         M_AXI_WDATA         => M_AXI_WDATA,
         M_AXI_WVALID        => M_AXI_WVALID,
         M_AXI_WREADY        => M_AXI_WREADY,
         M_AXI_BRESP         => M_AXI_BRESP,
+        M_AXI_WLAST         => M_AXI_WLAST,
         M_AXI_BVALID        => M_AXI_BVALID,
         M_AXI_BREADY        => M_AXI_BREADY
     );

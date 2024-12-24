@@ -9,16 +9,23 @@ PORT (
     refclk : IN STD_LOGIC;--! reference clock expect 250Mhz
     rst    : IN STD_LOGIC; --! sync active LOW reset. sync -> refclk
     
+    -- Camera
+    cam_data            :  in  std_logic_vector(23 downto 0);
+    cam_valid           :  out std_logic;
+    cam_ready           :  in  std_logic;
+    
     -- Global Signals
 
     -- No reset
     m_axi_awaddr        :   out std_logic_vector(31 downto 0);
     m_axi_awvalid       :   out std_logic;
     m_axi_awready       :   in  std_logic;
+    m_axi_awlen         :   out std_logic_vector(3 downto 0);
     -- Write data channel signals
     m_axi_wdata         :   out std_logic_vector(31 downto 0);
     m_axi_wvalid        :   out std_logic;
     m_axi_wready        :   in  std_logic;
+    m_axi_wlast         :   out std_logic;
     --  Write response channel signals
     m_axi_bresp         :   in  std_logic_vector(1 downto 0);
     m_axi_bvalid        :   in  std_logic;
@@ -43,7 +50,7 @@ constant axi_address_width_log2b  : natural                       := 5;
 constant message : std_logic_vector(95 downto 0)  := "101101001001001001011110001100101001111111110101000000111010010100001101111110111111001010100001"; 
 
 -- Itterators
-signal image_itterator : natural                := 0;
+signal image_pixel_itterator : natural                := 0;
 
 -- M_AXI4
 signal axi4_write_addr          :   std_logic_vector(31 downto 0);
@@ -53,10 +60,6 @@ signal axi4_write_complete      :   std_logic;
 signal axi4_write_result        :   std_logic_vector(1 downto 0);
 signal m_axi_aclk                :   std_logic;
 
--- Cammera
-signal cam_data                 :  std_logic_vector(23 downto 0);
-signal cam_valid                :  std_logic;
-signal cam_ready                :  std_logic;
 
 -- Stego Block
 signal stego_data_in            : std_logic_vector(23 downto 0);
@@ -72,14 +75,6 @@ signal stego_read_signal        : boolean           := false;
 signal axi_write_signal         : boolean           := false;
     
 begin
-    camera : entity work.cam_block
-    port map (
-        clk         => refclk,
-        reset       => rst,
-        pixel_data    => cam_data,
-        valid  => cam_valid,
-        ready  => cam_ready
-    );
     
     stego : entity work.stego_block
     port map (
@@ -111,9 +106,11 @@ begin
         M_AXI_AWADDR        => m_axi_awaddr,
         M_AXI_AWVALID       => m_axi_awvalid,
         M_AXI_AWREADY       => m_axi_awready,
+        M_AXI_AWLEN         => m_axi_awlen,
         M_AXI_WDATA         => m_axi_wdata,
         M_AXI_WVALID        => m_axi_wvalid,
         M_AXI_WREADY        => m_axi_wready,
+        M_AXI_WLAST         => m_axi_wlast,
         M_AXI_BRESP         => m_axi_bresp,
         M_AXI_BVALID        => m_axi_bvalid,
         M_AXI_BREADY        => m_axi_bready
@@ -136,9 +133,9 @@ begin
         end if;
         
         stego_data_in <= cam_data_safe;
-        stego_msg <= message(image_itterator mod message'length);
+        stego_msg <= message(image_pixel_itterator mod message'length);
         axi4_write_data <= B"00000000" & stego_data_safe;
-        axi4_write_addr <= std_logic_vector(TO_UNSIGNED(image_itterator * 8 * 3, axi4_write_addr'length));
+        axi4_write_addr <= std_logic_vector(TO_UNSIGNED(image_pixel_itterator * 8 * 3, axi4_write_addr'length));
         
     end process;
     
@@ -192,6 +189,7 @@ begin
             when wait_axi4_write =>
                 if axi4_write_complete = '1' then
                     next_state <= wait_cam_confirm;
+                    image_pixel_itterator <= image_pixel_itterator + 1;
                 end if;
                 
         end case;

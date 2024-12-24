@@ -21,18 +21,31 @@ connect_bd_net [get_bd_ports refclk] [get_bd_pins axi_bram_ctrl_0/s_axi_aclk]
 
 create_bd_cell -type ip -vlnv SUAI:STUDENT:ip_block_axi:1.0 ip_block_axi
 
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_awaddr] [get_bd_pins axi_bram_ctrl_0/s_axi_awaddr]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_awvalid] [get_bd_pins axi_bram_ctrl_0/s_axi_awvalid]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_awready] [get_bd_pins axi_bram_ctrl_0/s_axi_awready]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_wdata] [get_bd_pins axi_bram_ctrl_0/s_axi_wdata]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_wvalid] [get_bd_pins axi_bram_ctrl_0/s_axi_wvalid]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_wready] [get_bd_pins axi_bram_ctrl_0/s_axi_wready]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_bresp] [get_bd_pins axi_bram_ctrl_0/s_axi_bresp]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_bvalid] [get_bd_pins axi_bram_ctrl_0/s_axi_bvalid]
-connect_bd_net [get_bd_pins ip_block_axi/m_axi_bready] [get_bd_pins axi_bram_ctrl_0/s_axi_bready]
-
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_awaddr] [get_bd_pins axi_bram_ctrl_0/s_axi_awaddr]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_awvalid] [get_bd_pins axi_bram_ctrl_0/s_axi_awvalid]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_awready] [get_bd_pins axi_bram_ctrl_0/s_axi_awready]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_wdata] [get_bd_pins axi_bram_ctrl_0/s_axi_wdata]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_wvalid] [get_bd_pins axi_bram_ctrl_0/s_axi_wvalid]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_wready] [get_bd_pins axi_bram_ctrl_0/s_axi_wready]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_bresp] [get_bd_pins axi_bram_ctrl_0/s_axi_bresp]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_bvalid] [get_bd_pins axi_bram_ctrl_0/s_axi_bvalid]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_bready] [get_bd_pins axi_bram_ctrl_0/s_axi_bready]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_awlen] [get_bd_pins axi_bram_ctrl_0/s_axi_awlen]
+#connect_bd_net [get_bd_pins ip_block_axi/m_axi_wlast] [get_bd_pins axi_bram_ctrl_0/s_axi_wlast]
+connect_bd_intf_net [get_bd_intf_pins ip_block_axi/M_AXI] [get_bd_intf_pins axi_bram_ctrl_0/S_AXI]
 connect_bd_net [get_bd_ports refclk] [get_bd_pins ip_block_axi/refclk]
 connect_bd_net [get_bd_ports sys_rst_n] [get_bd_pins ip_block_axi/rst]
+
+make_bd_pins_external  [get_bd_pins ip_block_axi/cam_data]
+set_property name cam_data [get_bd_ports cam_data_0]
+
+make_bd_pins_external  [get_bd_pins ip_block_axi/cam_ready]
+set_property name cam_ready [get_bd_ports cam_ready_0]
+
+make_bd_pins_external  [get_bd_pins ip_block_axi/cam_valid]
+set_property name cam_valid [get_bd_ports cam_valid_0]
+
+make_bd_pins_external  [get_bd_pins axi_bram_ctrl_0/s_axi_rready] [get_bd_pins axi_bram_ctrl_0/s_axi_rresp] [get_bd_pins axi_bram_ctrl_0/s_axi_arlen] [get_bd_pins axi_bram_ctrl_0/s_axi_arready] [get_bd_pins axi_bram_ctrl_0/s_axi_araddr] [get_bd_pins axi_bram_ctrl_0/s_axi_rdata] [get_bd_pins axi_bram_ctrl_0/s_axi_rlast] [get_bd_pins axi_bram_ctrl_0/s_axi_arsize] [get_bd_pins axi_bram_ctrl_0/s_axi_arvalid] [get_bd_pins axi_bram_ctrl_0/s_axi_rvalid]
 
 make_wrapper -files [get_files $CURRENT_DIR/$PROJECT_NAME/$PROJECT_NAME.srcs/sources_1/bd/design_1/design_1.bd] -top
 add_files -norecurse $CURRENT_DIR/$PROJECT_NAME/$PROJECT_NAME.gen/sources_1/bd/design_1/hdl/design_1_wrapper.vhd
@@ -40,5 +53,5 @@ set_property library work [get_files $CURRENT_DIR/$PROJECT_NAME/$PROJECT_NAME.ge
 update_compile_order -fileset sources_1
 
 
-
 set_property top design_tb [get_filesets sim_1]
+regenerate_bd_layout

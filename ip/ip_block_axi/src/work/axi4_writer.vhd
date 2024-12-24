@@ -39,10 +39,12 @@ entity axi4_writer is
         M_AXI_AWADDR        :   out std_logic_vector(2**axi_address_width_log2b - 1 downto 0);
         M_AXI_AWVALID       :   out std_logic;
         M_AXI_AWREADY       :   in  std_logic;
+        M_AXI_AWLEN         :   out std_logic_vector(3 downto 0);
         -- Write data channel signals
         M_AXI_WDATA         :   out std_logic_vector(2**axi_data_width_log2b - 1 downto 0);
         M_AXI_WVALID        :   out std_logic;
         M_AXI_WREADY        :   in  std_logic;
+        M_AXI_WLAST         :   out std_logic;
         --  Write response channel signals
         M_AXI_BRESP         :   in  std_logic_vector(1 downto 0);
         M_AXI_BVALID        :   in  std_logic;
@@ -89,7 +91,7 @@ begin
         else
             shift_modifier := 0;
         end if;
-        wdata_reg       := (wdata_reg'left downto write_data_safe'left + 1 => '0') & write_data_safe;
+        wdata_reg       := write_data_safe; -- (wdata_reg'left downto write_data_safe'left + 1 => '0') & 
         -- The address is right now aligned to 32 bit and needs to be aligned to 2**axi_data_width_log2b
         -- We want the first axi_data_width_log2b-3 bits to be zero, counted from the right.
         -- Now, it might be the case that axi_data_width_log2b-3 > 32. But that is really weird.
@@ -196,5 +198,7 @@ begin
                 write_data_read     <= true;
                 M_AXI_WVALID    <= '0';
         end case;
+        M_AXI_AWLEN     <= (others => '0');
+        M_AXI_WLAST     <= '1';
     end process;
 end Behavioral;
