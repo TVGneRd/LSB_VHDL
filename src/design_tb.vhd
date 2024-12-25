@@ -48,6 +48,8 @@ architecture Behavioral of design_tb is
     SIGNAL cam_ready : std_logic  := '0';
     SIGNAL cam_data : std_logic_vector(23 downto 0);
 
+    SIGNAL last_data : std_logic_vector(23 downto 0);
+
     signal read_addr                : std_logic_vector(31 downto 2)     := (others => '0');
     signal read_data                : std_logic_vector(31 downto 0);
     signal read_start               : std_logic                         := '0';
@@ -140,8 +142,28 @@ begin
         WAIT;
     END PROCESS reset_up;
     
+    test_kolya : PROCESS(cam_valid, cam_ready)
+    BEGIN
+        if cam_valid = 1 and cam_ready = 1 THEN
+            last_data <= cam_data;
+
+
+    END PROCESS test_bench_main;
+    memory_test_complete = 0;
+    test_andrey : PROCESS(cam_valid, cam_ready)
+    BEGIN
+    axi4_write_addr <= std_logic_vector(TO_UNSIGNED(image_pixel_itterator * 8 * 3, axi4_write_addr'length));
+        if cam_valid = 1 and cam_ready = 0 THEN
+            --test reading
+
+
+    END PROCESS test_bench_main;
+
     test_bench_main : PROCESS
     BEGIN
+    --...
+        --reading
+        read_data == last_data (31 down to 1)
         test_completed <= true AFTER 10 us;
         WAIT;
     END PROCESS test_bench_main;
