@@ -43,10 +43,14 @@ architecture Behavioral of design_tb is
     SIGNAL refclk : STD_LOGIC := '0';
     
     SIGNAL test_completed : BOOLEAN := false;
+    SIGNAL memory_test_completed : BOOLEAN := false;
 
     SIGNAL cam_valid : std_logic  := '0';
     SIGNAL cam_ready : std_logic  := '0';
     SIGNAL cam_data : std_logic_vector(23 downto 0);
+
+    SIGNAL last_data : std_logic_vector(23 downto 0);
+    
 
     signal read_addr                : std_logic_vector(31 downto 2)     := (others => '0');
     signal read_data                : std_logic_vector(31 downto 0);
@@ -65,6 +69,7 @@ architecture Behavioral of design_tb is
     signal AXI_1_RREADY             : std_logic;
 
 begin
+    test_completed <= memory_test_completed;
     design_1_wrapper_i: entity work.design_1_wrapper
     port map (
         refclk => refclk,
@@ -140,8 +145,20 @@ begin
         WAIT;
     END PROCESS reset_up;
     
+    cam_listen : PROCESS(cam_valid, cam_ready)
+    BEGIN
+        if cam_valid = '1' and cam_ready = '1' THEN 
+            last_data <= cam_data;
+        end if;
+
+
+    END PROCESS cam_listen;
+    
+
     test_bench_main : PROCESS
     BEGIN
+    --...
+        --reading
         test_completed <= true AFTER 10 us;
         WAIT;
     END PROCESS test_bench_main;
