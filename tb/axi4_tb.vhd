@@ -26,7 +26,6 @@ architecture Behavioral of tb_axi4 is
     signal AXI_1_write_start        : std_logic                         := '0';
     signal AXI_1_write_complete     : std_logic;
     signal AXI_1_write_result       : std_logic_vector(1 downto 0);
-    signal AXI_1_write_mask         : std_logic_vector(3 downto 0)      := (others => '1');
     signal AXI_1_ACLK               : std_logic;
     signal AXI_1_AWADDR             : std_logic_vector(31 downto 0);
     signal AXI_1_AWVALID            : std_logic;
@@ -49,7 +48,6 @@ architecture Behavioral of tb_axi4 is
     signal AXI_2_write_start        : std_logic                         := '0';
     signal AXI_2_write_complete     : std_logic;
     signal AXI_2_write_result       : std_logic_vector(1 downto 0);
-    signal AXI_2_write_mask         : std_logic_vector(3 downto 0)      := (others => '1');
     signal AXI_2_ACLK               : std_logic;
     signal AXI_2_AWADDR             : std_logic_vector(31 downto 0);
     signal AXI_2_AWVALID            : std_logic;
@@ -78,7 +76,6 @@ begin
         write_start         => AXI_1_write_start,
         write_complete      => AXI_1_write_complete,
         write_result        => AXI_1_write_result,
-        write_mask          => AXI_1_write_mask,
         
         M_AXI_ACLK          => AXI_1_ACLK,
         M_AXI_AWADDR        => AXI_1_AWADDR,
@@ -106,7 +103,6 @@ begin
         write_start         => AXI_2_write_start,
         write_complete      => AXI_2_write_complete,
         write_result        => AXI_2_write_result,
-        write_mask          => AXI_2_write_mask,
        
         M_AXI_ACLK          => AXI_2_ACLK,
         M_AXI_AWADDR        => AXI_2_AWADDR,
