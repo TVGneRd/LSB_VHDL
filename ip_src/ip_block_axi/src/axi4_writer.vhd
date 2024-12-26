@@ -53,7 +53,7 @@ entity axi4_writer is
 end axi4_writer;
 
 ARCHITECTURE Behavioral of axi4_writer is
-    type m_state_type is (rst_state, wait_for_start, wait_for_awready_wready, wait_for_awready, wait_for_wready, assert_bready);
+    type m_state_type is (rst_state, wait_for_start, wait_for_awready, wait_for_wready, assert_bready);
     
     signal cur_state        : m_state_type      := rst_state;
     signal next_state       : m_state_type      := rst_state;
@@ -86,16 +86,12 @@ begin
                 bresp_safe      := M_AXI_BRESP;
             end if;
         end if;
-        if axi_data_width_log2b > 5 then
-            shift_modifier  := to_integer(unsigned(write_addr_safe(axi_data_width_log2b - 4 downto 2)))*4;
-        else
-            shift_modifier := 0;
-        end if;
-        wdata_reg       := write_data_safe; -- (wdata_reg'left downto write_data_safe'left + 1 => '0') & 
-        -- The address is right now aligned to 32 bit and needs to be aligned to 2**axi_data_width_log2b
-        -- We want the first axi_data_width_log2b-3 bits to be zero, counted from the right.
-        -- Now, it might be the case that axi_data_width_log2b-3 > 32. But that is really weird.
-        M_AXI_AWADDR    <= (M_AXI_AWADDR'left downto write_addr_safe'left + 1 => '0') & write_addr_safe(write_addr_safe'left downto axi_data_width_log2b - 3) & (axi_data_width_log2b - 4 downto 0 => '0');
+        
+        shift_modifier := 0;
+        
+        wdata_reg       := write_data_safe; 
+      
+        M_AXI_AWADDR    <= write_addr_safe;
         M_AXI_WDATA     <= std_logic_vector(shift_left(unsigned(wdata_reg), shift_modifier*8));
         write_result    <= bresp_safe;
 
@@ -105,10 +101,7 @@ begin
     begin
         if rst = '0' then
             cur_state       <= rst_state;
-            cur_state       <= rst_state;
         elsif rising_edge(clk) then
-            cur_state       <= next_state;
-            cur_state       <= next_state;
             cur_state       <= next_state;
         end if;
     end process;
@@ -121,19 +114,11 @@ begin
                 next_state <= wait_for_start;
             when wait_for_start =>
                 if write_start = '1' then
-                    next_state <= wait_for_awready_wready;
-                end if;
-            when wait_for_awready_wready =>
-                if M_AXI_AWREADY = '1' and M_AXI_WREADY = '1' then
-                    next_state <= assert_bready;
-                elsif M_AXI_AWREADY = '1' then
-                    next_state <= wait_for_wready;
-                elsif M_AXI_WREADY = '1' then
                     next_state <= wait_for_awready;
                 end if;
             when wait_for_awready =>
                 if M_AXI_AWREADY = '1' then
-                    next_state <= assert_bready;
+                    next_state <= wait_for_wready;
                 end if;
             when wait_for_wready =>
                 if M_AXI_WREADY = '1' then
@@ -165,14 +150,7 @@ begin
                 M_AXI_AWVALID   <= '0';
                 write_data_read     <= true;
                 M_AXI_WVALID    <= '0';
-            when wait_for_awready_wready =>
-                bresp_read          <= true;
-                M_AXI_BREADY    <= '0';
-                write_complete      <= '0';
-                write_addr_read     <= false;
-                M_AXI_AWVALID   <= '1';
-                write_data_read     <= false;
-                M_AXI_WVALID    <= '1';
+            
             when wait_for_awready =>
                 bresp_read          <= true;
                 M_AXI_BREADY    <= '0';

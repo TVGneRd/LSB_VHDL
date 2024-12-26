@@ -52,13 +52,13 @@ architecture Behavioral of design_tb is
     SIGNAL last_data : std_logic_vector(23 downto 0);
     
 
-    signal read_addr                : std_logic_vector(31 downto 2)     := (others => '0');
+    signal read_addr                : std_logic_vector(14 downto 0)     := (others => '0');
     signal read_data                : std_logic_vector(31 downto 0);
     signal read_start               : std_logic                         := '0';
     signal read_complete            : std_logic;
     signal read_result              : std_logic_vector(1 downto 0);
-    signal AXI_1_ARADDR             : std_logic_vector(31 downto 0);
-    signal AXI_1_ARLEN              : std_logic_vector(3 downto 0);
+    signal AXI_1_ARADDR             : std_logic_vector(14 downto 0);
+    signal AXI_1_ARLEN              : std_logic_vector(7 downto 0);
     signal AXI_1_ARSIZE             : std_logic_vector(2 downto 0);
     signal AXI_1_ARVALID            : std_logic;
     signal AXI_1_ARREADY            : std_logic                         := '0';
@@ -102,8 +102,8 @@ begin
     
     reader : entity work.axi4_reader
     generic map (
-        axi_data_width_log2b    => 5,
-        axi_address_width_log2b => 5
+        axi_data_width    => 32,
+        axi_address_width => 15
     )
     port map (
         clk                     => refclk,
@@ -154,13 +154,4 @@ begin
 
     END PROCESS cam_listen;
     
-
-    test_bench_main : PROCESS
-    BEGIN
-    --...
-        --reading
-        test_completed <= true AFTER 10 us;
-        WAIT;
-    END PROCESS test_bench_main;
-
 end Behavioral;

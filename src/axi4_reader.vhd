@@ -4,20 +4,20 @@ USE ieee.numeric_std.ALL;
 
 entity axi4_reader is
     generic (
-        axi_data_width_log2b    :   natural range 5 to 255 := 5;
-        axi_address_width_log2b :   natural range 5 to 255 := 6
+        axi_data_width          :   natural range 1 to 255 := 5;
+        axi_address_width       :   natural range 1 to 255 := 6
     );
     port (
         clk                 :   in  std_logic;
         rst                 :   in  std_logic;
-        read_addr           :   in  std_logic_vector(31 downto 2);
-        read_data           :   out std_logic_vector(31 downto 0);
+        read_addr           :   in  std_logic_vector(axi_address_width - 1 downto 0);
+        read_data           :   out std_logic_vector(axi_data_width - 1 downto 0);
         read_start          :   in  std_logic;
         read_complete       :   out std_logic;
         read_result         :   out std_logic_vector(1 downto 0);
         --  Read address channel signals
-        M_AXI_ARADDR        :   out std_logic_vector(2**axi_address_width_log2b - 1 downto 0);
-        M_AXI_ARLEN         :   out std_logic_vector(3 downto 0);
+        M_AXI_ARADDR        :   out std_logic_vector(axi_address_width - 1 downto 0);
+        M_AXI_ARLEN         :   out std_logic_vector(7 downto 0);
         M_AXI_ARSIZE        :   out std_logic_vector(2 downto 0);
         M_AXI_ARBURST       :   out std_logic_vector(1 downto 0);
         M_AXI_ARCACHE       :   out std_logic_vector(3 downto 0);
@@ -25,7 +25,7 @@ entity axi4_reader is
         M_AXI_ARVALID       :   out std_logic;
         M_AXI_ARREADY       :   in  std_logic;
         -- Read data channel signals
-        M_AXI_RDATA         :   in  std_logic_vector(2**axi_data_width_log2b - 1 downto 0);
+        M_AXI_RDATA         :   in  std_logic_vector(axi_data_width - 1 downto 0);
         M_AXI_RRESP         :   in  std_logic_vector(1 downto 0);
         M_AXI_RLAST         :   in  std_logic;
         M_AXI_RVALID        :   in  std_logic;
@@ -100,22 +100,19 @@ begin
                 read_data_store := M_AXI_RDATA;
             end if;
             if update_read_addr then
-                read_addr_store := read_addr & "00";
+                read_addr_store := read_addr;
             end if;
             if update_read_result then
                 read_result_store := M_AXI_RRESP;
             end if;
         end if;
-        if axi_data_width_log2b > 5 then
-            shift_modifier  := to_integer(unsigned(read_addr_store(axi_data_width_log2b - 4 downto 2)))*4;
-        else
-            shift_modifier  := 0;
-        end if;
+
+        shift_modifier  := 0;
+            
         read_data       <= read_data_store(read_data'left + shift_modifier*8 downto shift_modifier*8);
         read_result     <= read_result_store;
-        M_AXI_ARADDR    <= (M_AXI_ARADDR'left downto read_addr_store'left + 1 => '0') & read_addr_store(read_addr_store'left downto axi_data_width_log2b - 3) & (axi_data_width_log2b - 4 downto 0 => '0');
-        -- 2**axi_data_width_log2b / 8 bytes per transfer
-        M_AXI_ARSIZE    <= std_logic_vector(to_unsigned(axi_data_width_log2b - 3, M_AXI_ARSIZE'length));
+        M_AXI_ARADDR    <= read_addr_store;
+        M_AXI_ARSIZE    <= std_logic_vector(to_unsigned(axi_data_width, M_AXI_ARSIZE'length));
     end process;
 
     -- The state decides the output
