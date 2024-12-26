@@ -63,7 +63,7 @@ begin
     -- сброс
     process(clk, reset)
     begin
-        if reset = '1' then
+        if reset = '0' then
             current_state <= reset_state;
         elsif rising_edge(clk) then -- если циклично то норм
             current_state <= next_state;
@@ -134,7 +134,7 @@ begin
     -- решаем что делать с пикселями
     process(clk, reset, current_state, valid)
     begin
-        if reset = '1' then
+        if reset = '0' then
             pixel_index <= 0;
         elsif rising_edge(clk) then
             if current_state = wait_valid then
