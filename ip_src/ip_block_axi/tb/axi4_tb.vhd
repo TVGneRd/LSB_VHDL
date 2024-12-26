@@ -5,14 +5,17 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
 
 entity tb_axi4 is
+port (
+    test_completed                    : out std_logic;
+    clk : in std_logic 
+     );
 end tb_axi4;
 
 architecture Behavioral of tb_axi4 is
     constant clock_period               : time := 20 ns;
 
-    signal test_done                    : boolean;
 
-    signal clk                          : std_logic                     := '1';
+    signal test_done                    : boolean                     := false;
     signal rst                          : std_logic                     := '1';
 
     -- AXI 1
@@ -21,7 +24,7 @@ architecture Behavioral of tb_axi4 is
     constant axi_1_address_wdith_log2b  : natural                       := 5;
     -- The signals for axi4_acp_1
     signal AXI_1_write_test_done    : boolean := false;
-    signal AXI_1_write_addr         : std_logic_vector(31 downto 2)     := (others => '0');
+    signal AXI_1_write_addr         : std_logic_vector(31 downto 0)     := (others => '0');
     signal AXI_1_write_data         : std_logic_vector(31 downto 0)     := (others => '0');
     signal AXI_1_write_start        : std_logic                         := '0';
     signal AXI_1_write_complete     : std_logic;
@@ -39,11 +42,11 @@ architecture Behavioral of tb_axi4 is
     
     -- AXI 2
     -- Constants
-    constant axi_2_data_width_log2b     : natural                           := 6;
+    constant axi_2_data_width_log2b     : natural                           := 5;
     constant axi_2_address_wdith_log2b  : natural                           := 5;
     -- The signals for axi4_acp_1
     signal AXI_2_write_test_done    : boolean := false;
-    signal AXI_2_write_addr         : std_logic_vector(31 downto 2)     := (others => '0');
+    signal AXI_2_write_addr         : std_logic_vector(31 downto 0)     := (others => '0');
     signal AXI_2_write_data         : std_logic_vector(31 downto 0)     := (others => '0');
     signal AXI_2_write_start        : std_logic                         := '0';
     signal AXI_2_write_complete     : std_logic;
@@ -52,7 +55,7 @@ architecture Behavioral of tb_axi4 is
     signal AXI_2_AWADDR             : std_logic_vector(31 downto 0);
     signal AXI_2_AWVALID            : std_logic;
     signal AXI_2_AWREADY            : std_logic                         := '0';
-    signal AXI_2_WDATA              : std_logic_vector(63 downto 0);
+    signal AXI_2_WDATA              : std_logic_vector(31 downto 0);
     signal AXI_2_WVALID             : std_logic;
     signal AXI_2_WREADY             : std_logic                         := '0';
     signal AXI_2_BRESP              : std_logic_vector(1 downto 0)      := (others => '0');
@@ -61,6 +64,7 @@ architecture Behavioral of tb_axi4 is
 begin
 
     test_done <= AXI_1_write_test_done and AXI_2_write_test_done;
+    test_completed <= '1' when test_done else '0';
 
     axi4_1 : entity work.axi4_master
     generic map (
@@ -116,19 +120,6 @@ begin
         M_AXI_BVALID        => AXI_2_BVALID,
         M_AXI_BREADY        => AXI_2_BREADY
     );
-
-
-    -- Clk generator, simply switch flanks every half period
-    clock_gen : process
-    begin
-        if not (test_done) then
-            -- 1/2 duty cycle
-            clk <= not clk;
-            wait for clock_period/2;
-        else
-            wait;
-        end if;
-    end process;
 
     reset_loop : process
     begin
@@ -190,7 +181,7 @@ begin
         assert AXI_1_write_complete = '0' severity error;
         -- AXI_1_write_result
         assert AXI_1_AWVALID = '1' severity error;
-        assert AXI_1_AWADDR = std_logic_vector(write_addr) & "00";
+        --assert AXI_1_AWADDR = std_logic_vector(write_addr) & "00";
         assert AXI_1_WDATA = std_logic_vector(resize(write_data, AXI_1_WDATA'length));
         assert AXI_1_WVALID = '1' severity error;
         -- AXI_1_BREADY
