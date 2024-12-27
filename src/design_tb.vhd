@@ -154,11 +154,40 @@ begin
 
     END PROCESS cam_listen;
     
+    mem_read : PROCESS(cam_valid, cam_ready)
+    BEGIN
+        --axi4_write_addr <= std_logic_vector(TO_UNSIGNED(image_pixel_itterator * 8 * 3, axi4_write_addr'length));
+        if cam_valid = 1 and cam_ready = 0 THEN
+            --test reading
+            AXI_1_ARADDR <= std_logic_vector(TO_UNSIGNED(read_itterator * 8 * 3, AXI_1_ARADDR'length));
+            read_start <= '1';
+
+            wait for EDGE_CLK;
+
+            AXI_1_ARREADY <= '1';
+
+            wait for EDGE_CLK;
+
+            AXI_1_RVALID <= '1';
+
+            wait for EDGE_CLK;
+
+            assert last_data = read_data(31 downto 8) severity error;
+
+            read_itterator <= read_itterator + 1;
+
+            AXI_1_ARREADY <= '0';
+            AXI_1_RVALID <= '0';
+        end if;
+
+
+    END PROCESS mem_read;
 
     test_bench_main : PROCESS
     BEGIN
     --...
         --reading
+        
         test_completed <= true AFTER 10 us;
         WAIT;
     END PROCESS test_bench_main;
