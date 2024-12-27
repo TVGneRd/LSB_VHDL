@@ -12,6 +12,9 @@ architecture rtl of ip_block_axi_TB is
   SIGNAL rst   : STD_LOGIC := '0';
   SIGNAL refclk : STD_LOGIC := '0';
   SIGNAL test_completed : BOOLEAN := false;
+  SIGNAL test_axi_comleted : STD_LOGIC := '0';
+  SIGNAL test_stego_comleted : STD_LOGIC := '0';
+  SIGNAL test_camera_comleted : STD_LOGIC := '0';
     COMPONENT ip_block_axi_TOP IS
       PORT (
         refclk : IN  STD_LOGIC;--! reference clock expect 250Mhz
@@ -19,14 +22,25 @@ architecture rtl of ip_block_axi_TB is
       );
     END COMPONENT;
 begin
-
-  ip_block_axi_TOP_inst : ip_block_axi_TOP
-  PORT MAP
-  (
-    refclk => refclk,
-    rst    => rst
-  );
-
+  test_completed <= test_axi_comleted = '1' and test_stego_comleted = '1' and test_camera_comleted ='1';
+   axi4_tb : entity work.tb_axi4
+    port map (
+        clk                 => refclk,
+        test_completed      => test_axi_comleted
+    );
+    
+    stego_tb : entity work.stego_tb
+    port map (
+        clk                 => refclk,
+        test_completed      => test_stego_comleted
+    );
+    
+    camera_tb : entity work.camera_tb
+    port map (
+        clk                 => refclk,
+        test_completed      => test_camera_comleted
+    );
+    
   test_clk_generator : PROCESS
   BEGIN
     IF NOT test_completed THEN
@@ -39,7 +53,6 @@ begin
 
   test_bench_main : PROCESS
   BEGIN
-    test_completed <= true AFTER 50 ns;
-    WAIT;
+
   END PROCESS test_bench_main;
 end architecture rtl;

@@ -24,12 +24,16 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
 
 entity stego_tb is
+port (
+    test_completed                    : out std_logic;
+    clk : in std_logic
+     );
 end stego_tb;
 
 architecture Behavioral of stego_tb is
     constant clock_period : time      := 20 ns;
 
-    signal test_done      : boolean;
+    signal test_done      : boolean := false;
 
     signal clk1            : std_logic               := '1';
     signal rst1           : std_logic               := '1';
@@ -41,21 +45,12 @@ architecture Behavioral of stego_tb is
     signal pixel_out1   : std_logic_vector(23 downto 0) := (others => '0');
 
     signal test_check   : boolean := false;
+    
     ------
 begin
     test_done <= test_check;
-
-    clock_gen : process
-    begin
-        if not (test_done) then
-            -- 1/2 duty cycle
-            clk1 <= not clk1;
-            wait for clock_period/2;
-        else
-            wait;
-        end if;
-    end process;
-
+    test_completed <= '1' when test_done else '0';
+    
     reset_loop : process
     begin
         wait for 2*clock_period;
@@ -75,7 +70,7 @@ begin
     );
     test_process : process
     begin
-        msg_in1 <= '1';
+        msg_in1 <= '1'; 
         wait for clock_period;
         assert pixel_ready1 = '0' report "Reset works bad.." severity error;
 
