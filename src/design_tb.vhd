@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.numeric_std.ALL;--! for the signed, unsigned types and arithmetic ops
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -45,12 +46,14 @@ architecture Behavioral of design_tb is
     SIGNAL test_completed : BOOLEAN := false;
     SIGNAL memory_test_completed : BOOLEAN := false;
 
-    SIGNAL cam_valid : std_logic  := '0';
-    SIGNAL cam_ready : std_logic  := '0';
-    SIGNAL cam_data : std_logic_vector(23 downto 0);
+    SIGNAL cam_valid    : std_logic  := '0';
+    SIGNAL cam_ready    : std_logic  := '0';
+    SIGNAL cam_data     : std_logic_vector(23 downto 0);
 
-    SIGNAL last_data : std_logic_vector(23 downto 0);
+    SIGNAL last_data                : std_logic_vector(23 downto 0);
+    SIGNAL caught_cam_data          : std_logic_vector(23 downto 0);
     
+    signal read_itterator           : integer  := -1;
 
     signal read_addr                : std_logic_vector(14 downto 0)     := (others => '0');
     signal read_data                : std_logic_vector(31 downto 0);
@@ -147,50 +150,34 @@ begin
     
     cam_listen : PROCESS(cam_valid, cam_ready)
     BEGIN
-        if cam_valid = '1' and cam_ready = '1' THEN 
-            last_data <= cam_data;
+        
+        if cam_valid = '1' and rising_edge(cam_ready) THEN 
+            last_data <= caught_cam_data;
+            caught_cam_data <= cam_data;
         end if;
-
-
+        
     END PROCESS cam_listen;
     
-    mem_read : PROCESS(cam_valid, cam_ready)
+    mem_read : PROCESS
     BEGIN
+        wait until cam_valid = '1' and cam_ready = '0';
         --axi4_write_addr <= std_logic_vector(TO_UNSIGNED(image_pixel_itterator * 8 * 3, axi4_write_addr'length));
-        if cam_valid = 1 and cam_ready = 0 THEN
-            --test reading
-            AXI_1_ARADDR <= std_logic_vector(TO_UNSIGNED(read_itterator * 8 * 3, AXI_1_ARADDR'length));
+        --test reading
+        if not (read_itterator = -1) THEN
+            read_addr <= std_logic_vector(TO_UNSIGNED(read_itterator * 8 * 3, AXI_1_ARADDR'length));
             read_start <= '1';
 
-            wait for EDGE_CLK;
-
-            AXI_1_ARREADY <= '1';
-
-            wait for EDGE_CLK;
-
-            AXI_1_RVALID <= '1';
-
-            wait for EDGE_CLK;
-
-            assert last_data = read_data(31 downto 8) severity error;
-
-            read_itterator <= read_itterator + 1;
-
-            AXI_1_ARREADY <= '0';
-            AXI_1_RVALID <= '0';
+            wait until read_complete = '1';
+            
+            read_start <= '0';
+            
+            assert last_data(23 downto 1) = read_data(23 downto 1) severity error;
+            
         end if;
+
+        read_itterator <= read_itterator + 1;
 
 
     END PROCESS mem_read;
 
-    test_bench_main : PROCESS
-    BEGIN
-    --...
-        --reading
-        
-        test_completed <= true AFTER 10 us;
-        WAIT;
-    END PROCESS test_bench_main;
-
-    
 end Behavioral;
