@@ -34,7 +34,7 @@ architecture Behavioral of camera_tb is
     constant clock_period : time      := 20 ns;
 
     signal test_done      : boolean := false;
-    signal rst           : std_logic               := '1';
+    signal rst           : std_logic               := '0';
     
     signal pixel_data    : std_logic_vector(23 downto 0) := (others => '0');
     signal valid   : std_logic := '0';
@@ -51,7 +51,7 @@ begin
     reset_loop : process
     begin
         wait for 2*clock_period;
-        rst <= '0';
+        rst <= '1';
         wait;
     end process;
 
@@ -66,7 +66,7 @@ begin
 
     test_process : process
     begin
- wait until rst = '0';
+        wait until rst = '1';
         wait for clock_period;
 
         -- Тест 1: Проверка начального состояния (idle)
@@ -91,10 +91,10 @@ begin
         assert ready = '1' report "FSM did not transition back to idle (ready != 1)!" severity error;
 
         -- Тест 6: Сброс FSM
-       -- rst <= '1';
+       -- rst <= '0';
        -- wait for clock_period;
        -- assert ready = '1' report "FSM did not reset to idle (ready != 1)!" severity error;
-        --rst <= '0';
+        --rst <= '1';
         test_check <= true;
         wait;
     end process;

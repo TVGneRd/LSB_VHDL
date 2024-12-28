@@ -35,8 +35,7 @@ architecture Behavioral of stego_tb is
 
     signal test_done      : boolean := false;
 
-    signal clk1            : std_logic               := '1';
-    signal rst1           : std_logic               := '1';
+    signal rst1           : std_logic               := '0';
     
     signal pixel_in1    : std_logic_vector(23 downto 0) := (others => '0');
     signal pixel_valid1 : std_logic := '0';
@@ -54,13 +53,13 @@ begin
     reset_loop : process
     begin
         wait for 2*clock_period;
-        rst1 <= '0';
+        rst1 <= '1';
         wait;
     end process;
 
     stego_test : entity work.stego_block
     port map(
-        clk => clk1,
+        clk => clk,
         reset => rst1,
         pixel_in => pixel_in1,
         pixel_valid => pixel_valid1,
@@ -74,7 +73,7 @@ begin
         wait for clock_period;
         assert pixel_ready1 = '0' report "Reset works bad.." severity error;
 
-        wait until rst1 = '0';
+        wait until rst1 = '1';
         wait for clock_period;
         assert pixel_ready1 = '1' report "Didn't gets ready for pixel.." severity error;
         

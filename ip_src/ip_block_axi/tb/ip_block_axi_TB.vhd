@@ -51,8 +51,4 @@ begin
     END IF;
   END PROCESS test_clk_generator;
 
-  test_bench_main : PROCESS
-  BEGIN
-
-  END PROCESS test_bench_main;
 end architecture rtl;

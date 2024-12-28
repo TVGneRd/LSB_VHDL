@@ -16,7 +16,7 @@ architecture Behavioral of tb_axi4 is
 
 
     signal test_done                    : boolean                     := false;
-    signal rst                          : std_logic                     := '1';
+    signal rst                          : std_logic                     := '0';
 
     -- AXI 1
     -- Constants
@@ -124,7 +124,7 @@ begin
     reset_loop : process
     begin
         wait for 2*clock_period;
-        rst <= '0';
+        rst <= '1';
         wait;
     end process;
 
@@ -151,7 +151,7 @@ begin
         -- AXI_1_WSTRB
         assert AXI_1_WVALID = '0' severity error;
         assert AXI_1_BREADY = '0' severity error;
-        wait until rst = '0';
+        wait until rst = '1';
         wait for clock_period;
         -- Writer should be in start state
         AXI_1_write_addr        <= std_logic_vector(write_addr);
@@ -253,7 +253,7 @@ begin
         -- AXI_2_WSTRB
         assert AXI_2_WVALID = '0' severity error;
         assert AXI_2_BREADY = '0' severity error;
-        wait until rst = '0';
+        wait until rst = '1';
         wait for clock_period;
         -- Writer should be in start state
         AXI_2_write_addr        <= std_logic_vector(write_addr);
